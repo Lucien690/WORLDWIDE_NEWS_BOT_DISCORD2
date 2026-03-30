@@ -28,8 +28,13 @@ def get_news():
         "apiKey": NEWS_API_KEY
     }
 
-    response = requests.get(url, params=params).json()
-    return response.get("articles", [])
+    response = requests.get(url, params=params)
+
+    if response.status_code != 200:
+        print("API ERROR:", response.text)
+        return []
+
+    return response.json().get("articles", [])
 
 def is_important(title):
     title = title.lower()
@@ -57,38 +62,42 @@ async def news_loop():
     channel = await client.fetch_channel(CHANNEL_ID)
 
     while not client.is_closed():
-        articles = get_news()
+        try:
+            articles = get_news()
 
-        for article in articles:
-            title = article["title"]
-            url = article["url"]
+            for article in articles:
+                title = article.get("title", "")
+                url = article.get("url", "")
 
-            if title in sent_news:
-                continue
+                if not title or title in sent_news:
+                    continue
 
-            if not is_important(title):
-                continue
+                if not is_important(title):
+                    continue
 
-            analysis = analyze_news(title)
+                analysis = analyze_news(title)
 
-            embed = discord.Embed(
-                title="🌍 Breaking Market News",
-                description=title,
-                color=discord.Color.orange()
-            )
+                embed = discord.Embed(
+                    title="🌍 Breaking Market News",
+                    description=title,
+                    color=discord.Color.orange()
+                )
 
-            embed.add_field(name="📊 Analyse", value=analysis, inline=False)
-            embed.add_field(name="🔗 Link", value=url, inline=False)
+                embed.add_field(name="📊 Analyse", value=analysis, inline=False)
+                embed.add_field(name="🔗 Link", value=url, inline=False)
 
-            await channel.send(embed=embed)
+                await channel.send(embed=embed)
 
-            sent_news.add(title)
+                sent_news.add(title)
+
+        except Exception as e:
+            print("ERROR:", e)
 
         await asyncio.sleep(300)
 
 @client.event
 async def on_ready():
-    print(f"News Bot online: {client.user}")
+    print(f"BOT ONLINE: {client.user}")
     client.loop.create_task(news_loop())
 
 client.run(TOKEN)
