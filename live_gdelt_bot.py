@@ -29,18 +29,18 @@ def get_news():
     url = "https://api.gdeltproject.org/api/v2/doc/doc"
 
     params = {
-    "query": "war OR oil OR gold OR crypto OR bank OR russia OR china OR iran OR israel OR usa OR europe",
-    "mode": "ArtList",
-    "maxrecords": 30,
-    "format": "json",
-    "sort": "DateDesc"
+        "query": "war OR oil OR gold OR crypto OR bank OR russia OR china OR iran OR israel OR usa OR europe",
+        "mode": "ArtList",
+        "maxrecords": 30,
+        "format": "json",
+        "sort": "DateDesc"
     }
 
     response = requests.get(url, params=params)
 
     if response.status_code != 200:
-    print("API ERROR:", response.text)
-    return []
+        print("API ERROR:", response.text)
+        return []
 
     return response.json().get("articles", [])
 
