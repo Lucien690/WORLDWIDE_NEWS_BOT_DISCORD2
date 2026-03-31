@@ -4,29 +4,35 @@ import asyncio
 import os
 
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = 1475125736665776128
+CHANNEL_ID = 1475125646064619541
 
 client = discord.Client(intents=discord.Intents.default())
 sent_news = set()
 
 KEYWORDS = [
+    # ⚔️ Krieg
     "war", "conflict", "attack", "strike", "missile", "explosion",
     "military", "invasion", "airstrike", "drone", "nuclear",
 
+    # 🌍 Länder
     "russia", "ukraine", "china", "taiwan",
     "iran", "israel", "usa", "united states",
     "europe", "eu", "germany", "france",
     "middle east", "nato",
 
+    # 🛢️ Öl / Energie
     "oil", "crude", "brent", "wti", "refinery", "pipeline",
     "gas", "energy", "opec",
 
+    # 🪙 Gold / Silber
     "gold", "silver", "precious metals", "bullion", "safe haven",
 
+    # 🏦 Banken
     "bank", "banking", "collapse", "financial crisis",
     "liquidity crisis", "blackrock", "jpmorgan",
     "goldman sachs", "central bank", "fed", "ecb",
 
+    # ₿ Crypto
     "bitcoin", "crypto", "ethereum", "binance", "coinbase"
 ]
 
@@ -37,7 +43,7 @@ def get_news():
     params = {
         "query": "war OR oil OR gold OR crypto OR bank OR russia OR china OR iran OR israel OR usa OR europe",
         "mode": "ArtList",
-        "maxrecords": 30,
+        "maxrecords": 25,
         "format": "json",
         "sort": "DateDesc"
     }
@@ -66,10 +72,10 @@ def get_score(title):
     if any(x in t for x in ["gold", "silver"]):
         score += 2
 
-    if any(x in t for x in ["russia", "china", "iran", "israel", "usa"]):
+    if any(x in t for x in ["crypto", "bitcoin"]):
         score += 1
 
-    if any(x in t for x in ["crypto", "bitcoin"]):
+    if any(x in t for x in ["russia", "china", "iran", "israel", "usa"]):
         score += 1
 
     return score
@@ -93,7 +99,7 @@ def analyze(title):
         return "🏦 BANKENRISIKO → Markt instabil | Aktien 📉 | Gold 📈"
 
     if any(x in t for x in ["gold", "silver"]):
-        return "🪙 GOLD / SILBER → Safe Haven Bewegung 📈"
+        return "🪙 GOLD / SILBER → Safe Haven 📈"
 
     if any(x in t for x in ["crypto", "bitcoin"]):
         return "₿ CRYPTO → Hohe Volatilität ⚡"
@@ -121,20 +127,17 @@ async def news_loop():
                 if title_clean in sent_news:
                     continue
 
+                # 👉 Keyword Filter
                 if not is_relevant(title):
                     continue
 
                 score = get_score(title)
-
-                if score < 3:
-                    continue
-
                 analysis = analyze(title)
 
                 embed = discord.Embed(
-                    title="🚨 LIVE MARKET ALERT",
+                    title="🌍 MARKET NEWS",
                     description=title,
-                    color=discord.Color.red()
+                    color=discord.Color.blue()
                 )
 
                 embed.add_field(name="📊 Analyse", value=analysis, inline=False)
@@ -157,7 +160,7 @@ async def news_loop():
 
 @client.event
 async def on_ready():
-    print("BOT ONLINE")
+    print("FINAL BOT ONLINE")
     client.loop.create_task(news_loop())
 
 
