@@ -1,15 +1,10 @@
-
-Lucien Giannattasio <lucien221119@gmail.com>
-06:43 (vor 0 Minuten)
-an mich
-
 import discord
 import requests
 import asyncio
 import os
 
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = 1487610796480663644
+CHANNEL_ID = 1475125736665776128
 
 client = discord.Client(intents=discord.Intents.default())
 sent_news = set()
