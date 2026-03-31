@@ -4,34 +4,24 @@ import asyncio
 import os
 
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = 1475125736665776128
+CHANNEL_ID = 1475125646064619541
 
 client = discord.Client(intents=discord.Intents.default())
 sent_news = set()
 
 KEYWORDS = [
-
-# ⚔️ KRIEG
 "war", "conflict", "attack", "strike", "missile", "explosion",
 "military", "invasion", "airstrike", "drone", "nuclear",
 "russia", "ukraine", "china", "taiwan",
 "iran", "israel", "usa", "united states",
 "europe", "eu", "germany", "france",
 "middle east", "nato",
-
-# 🛢️ ÖL
 "oil", "crude", "brent", "wti", "refinery", "pipeline",
 "gas", "energy", "opec",
-
-# 🪙 GOLD / SILBER
 "gold", "silver", "precious metals", "bullion", "safe haven",
-
-# 🏦 BANKEN
 "bank", "banking", "collapse", "financial crisis",
 "liquidity crisis", "blackrock", "jpmorgan",
 "goldman sachs", "central bank", "fed", "ecb",
-
-# ₿ CRYPTO
 "bitcoin", "crypto", "ethereum", "binance", "coinbase"
 ]
 
@@ -53,6 +43,7 @@ print("API ERROR:", response.text)
 return []
 
 return response.json().get("articles", [])
+
 
 def get_score(title):
 t = title.lower()
@@ -78,6 +69,7 @@ score += 1
 
 return score
 
+
 def analyze(title):
 t = title.lower()
 
@@ -97,6 +89,7 @@ if any(x in t for x in ["crypto", "bitcoin"]):
 return "₿ CRYPTO → Hohe Volatilität ⚡"
 
 return "⚠️ Marktbewegung möglich"
+
 
 async def news_loop():
 await client.wait_until_ready()
@@ -138,7 +131,6 @@ embed.add_field(name="📊 Analyse", value=analysis, inline=False)
 embed.add_field(name="🔥 Impact Score", value=str(score), inline=False)
 embed.add_field(name="🔗 Link", value=url, inline=False)
 
-# 🔔 Ping bei wichtigen News
 content = None
 if score >= 4:
 content = "@everyone 🚨 EXTREME NEWS"
@@ -150,11 +142,13 @@ sent_news.add(title_clean)
 except Exception as e:
 print("ERROR:", e)
 
-await asyncio.sleep(90) # ⚡ Live Feed
+await asyncio.sleep(90)
+
 
 @client.event
 async def on_ready():
 print(f"LIVE GDELT BOT ONLINE: {client.user}")
 client.loop.create_task(news_loop())
+
 
 client.run(TOKEN)
