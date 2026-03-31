@@ -4,7 +4,7 @@ import asyncio
 import os
 
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = 1475125646064619541
+CHANNEL_ID = 1475125736665776128
 
 client = discord.Client(intents=discord.Intents.default())
 sent_news = set()
