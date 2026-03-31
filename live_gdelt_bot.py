@@ -26,8 +26,7 @@ KEYWORDS = [
 ]
 
 def get_news():
-  
-url = "https://api.gdeltproject.org/api/v2/doc/doc"
+    url = "https://api.gdeltproject.org/api/v2/doc/doc"
 
 params = {
 "query": "war OR oil OR gold OR crypto OR bank OR russia OR china OR iran OR israel OR usa OR europe",
